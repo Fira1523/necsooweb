@@ -140,6 +140,11 @@ const ProjectManagement = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [inputStates, setInputStates] = useState({
+    partners: '',
+    impact: '',
+    objectives: ''
+  });
 
   const fetchProjects = useCallback(async () => {
     setLoading(true);
@@ -149,15 +154,18 @@ const ProjectManagement = () => {
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map(project => ({
           ...project,
-          partners: Array.isArray(project.partners) ? project.partners : [],
-          impact: Array.isArray(project.impact) ? project.impact : [],
-          objectives: Array.isArray(project.objectives) ? project.objectives : []
+          partners: project.partners ? 
+            (typeof project.partners === 'string' ? JSON.parse(project.partners) : project.partners) : [],
+          impact: project.impact ? 
+            (typeof project.impact === 'string' ? JSON.parse(project.impact) : project.impact) : [],
+          objectives: project.objectives ? 
+            (typeof project.objectives === 'string' ? JSON.parse(project.objectives) : project.objectives) : []
         }));
       setProjects(sortedProjects);
     } catch (error) {
       console.error('Error fetching projects:', error);
-      setSnackbarMessage('Error loading projects');
       setSnackbarSeverity('error');
+      setSnackbarMessage('Failed to fetch projects');
       setSnackbarOpen(true);
     } finally {
       setLoading(false);
@@ -179,13 +187,29 @@ const ProjectManagement = () => {
 
   const handleOpenDialog = useCallback((project = null) => {
     if (project) {
+      setIsEditing(true);
+      const partners = project.partners ? 
+        (typeof project.partners === 'string' ? JSON.parse(project.partners) : project.partners) : [];
+      const impact = project.impact ? 
+        (typeof project.impact === 'string' ? JSON.parse(project.impact) : project.impact) : [];
+      const objectives = project.objectives ? 
+        (typeof project.objectives === 'string' ? JSON.parse(project.objectives) : project.objectives) : [];
+
       setCurrentProject({
         ...project,
-        partners: Array.isArray(project.partners) ? project.partners : [],
-        impact: Array.isArray(project.impact) ? project.impact : [],
-        objectives: Array.isArray(project.objectives) ? project.objectives : []
+        partners: partners,
+        impact: impact,
+        objectives: objectives
       });
-      setIsEditing(true);
+
+      // Set input states
+      setInputStates({
+        partners: partners.join(', '),
+        impact: impact.join(', '),
+        objectives: objectives.join(', ')
+      });
+
+      setSelectedImage(null);
     } else {
       setCurrentProject({
         title: '',
@@ -200,14 +224,21 @@ const ProjectManagement = () => {
         impact: [],
         objectives: []
       });
+      setInputStates({
+        partners: '',
+        impact: '',
+        objectives: ''
+      });
       setIsEditing(false);
+      setSelectedImage(null);
     }
-    setSelectedImage(null);
     setOpenDialog(true);
   }, []);
 
   const handleCloseDialog = useCallback(() => {
     setOpenDialog(false);
+    setIsEditing(false);
+    setSelectedImage(null);
     setCurrentProject({
       title: '',
       category: '',
@@ -221,7 +252,11 @@ const ProjectManagement = () => {
       impact: [],
       objectives: []
     });
-    setSelectedImage(null);
+    setInputStates({
+      partners: '',
+      impact: '',
+      objectives: ''
+    });
   }, []);
 
   const handleImageChange = (event) => {
@@ -555,11 +590,57 @@ const ProjectManagement = () => {
               <TextField
                 fullWidth
                 label="Partners (comma-separated)"
-                value={Array.isArray(currentProject.partners) ? currentProject.partners.join(', ') : ''}
-                onChange={(e) => setCurrentProject({ 
-                  ...currentProject, 
-                  partners: e.target.value.split(',').map(p => p.trim()).filter(p => p)
-                })}
+                multiline
+                rows={2}
+                value={inputStates.partners}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setInputStates(prev => ({ ...prev, partners: value }));
+                  setCurrentProject(prev => ({
+                    ...prev,
+                    partners: value ? value.split(',').map(p => p.trim()).filter(p => p.length > 0) : []
+                  }));
+                }}
+                helperText="Type partner names separated by commas. Spaces are allowed in names."
+                placeholder="Partner One, Partner Two, Partner Three"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Impact Points (comma-separated)"
+                multiline
+                rows={2}
+                value={inputStates.impact}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setInputStates(prev => ({ ...prev, impact: value }));
+                  setCurrentProject(prev => ({
+                    ...prev,
+                    impact: value ? value.split(',').map(i => i.trim()).filter(i => i.length > 0) : []
+                  }));
+                }}
+                helperText="Type impact points separated by commas. Spaces are allowed in text."
+                placeholder="First Impact Point, Second Impact Point"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Objectives (comma-separated)"
+                multiline
+                rows={2}
+                value={inputStates.objectives}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setInputStates(prev => ({ ...prev, objectives: value }));
+                  setCurrentProject(prev => ({
+                    ...prev,
+                    objectives: value ? value.split(',').map(o => o.trim()).filter(o => o.length > 0) : []
+                  }));
+                }}
+                helperText="Type objectives separated by commas. Spaces are allowed in text."
+                placeholder="First Objective, Second Objective"
               />
             </Grid>
             <Grid item xs={12}>
@@ -576,39 +657,13 @@ const ProjectManagement = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Impact Points (comma-separated)"
-                multiline
-                rows={2}
-                value={Array.isArray(currentProject.impact) ? currentProject.impact.join(', ') : ''}
-                onChange={(e) => setCurrentProject({ 
-                  ...currentProject, 
-                  impact: e.target.value.split(',').map(i => i.trim()).filter(i => i)
-                })}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Objectives (comma-separated)"
-                multiline
-                rows={2}
-                value={Array.isArray(currentProject.objectives) ? currentProject.objectives.join(', ') : ''}
-                onChange={(e) => setCurrentProject({ 
-                  ...currentProject, 
-                  objectives: e.target.value.split(',').map(o => o.trim()).filter(o => o)
-                })}
-              />
-            </Grid>
-            <Grid item xs={12}>
               <Button
                 component="label"
                 variant="outlined"
                 startIcon={<CloudUploadIcon />}
                 sx={{ mt: 1 }}
               >
-                Upload Image
+                Upload New Image
                 <VisuallyHiddenInput
                   type="file"
                   accept="image/*"

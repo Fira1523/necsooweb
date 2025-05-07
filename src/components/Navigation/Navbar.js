@@ -11,39 +11,60 @@ import {
   ListItemText,
   useTheme,
   useMediaQuery,
-  Container
+  Container,
+  Menu,
+  MenuItem,
+  Typography,
+  Collapse
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { NavLink } from 'react-router-dom'; // Import NavLink
+import { NavLink } from 'react-router-dom'; 
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if screen size is small
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); 
+
+  const aboutMenuItems = [
+    { text: 'Background History', path: '/about/history' },
+    { text: 'Vision, Mission & Values', path: '/about/vision' },
+    { text: 'Organizational Objectives & Engagement Areas', path: '/about/objectives' },
+    { text: 'Governance Structure, Members & Membership Criteria', path: '/about/governance' },
+  ];
 
   const menuItems = [
     { text: 'Home', path: '/' },
-    { text: 'About', path: '/about' },
     { text: 'Gallery', path: '/gallery' },
     { text: 'Portfolio', path: '/portfolio' },
     { text: 'Blog', path: '/blog' },
     { text: 'Contact', path: '/contact' },
   ];
 
-  // Toggle Drawer on mobile
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  // Donate button component
+  const handleAboutMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleAboutMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const DonateButton = () => (
     <Button
       variant="contained"
       color="secondary"
       startIcon={<FavoriteIcon />}
-      component={NavLink} // Ensure NavLink is used here
-      to="/donate" // Ensure the path is correct
+      component={NavLink} 
+      to="/donate" 
       sx={{
         borderRadius: '20px',
         px: 3,
@@ -63,31 +84,6 @@ const Navbar = () => {
     </Button>
   );
 
-  const drawer = (
-    <List>
-      {menuItems.map((item) => (
-        <ListItem 
-          button 
-          component={NavLink} // Use NavLink instead of Link
-          to={item.path} 
-          key={item.text}
-          onClick={handleDrawerToggle}
-          sx={{
-            '&.active': {
-              fontWeight: 'bold',
-              color: theme.palette.primary.main, // Style for active link
-            },
-          }}
-        >
-          <ListItemText primary={item.text} />
-        </ListItem>
-      ))}
-      <ListItem sx={{ justifyContent: 'center', mt: 2 }}>
-        <DonateButton />
-      </ListItem>
-    </List>
-  );
-
   return (
     <AppBar 
       position="fixed" 
@@ -98,14 +94,19 @@ const Navbar = () => {
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {/* Logo/Brand */}
+        <Toolbar 
+          disableGutters 
+          sx={{ 
+            minHeight: { xs: '64px', md: '70px' },
+            py: { xs: 0.5, md: 0.75 }
+          }}
+        >
+          {/* Logo Section */}
           <Box sx={{ 
             flexGrow: 0, 
             display: 'flex', 
-            alignItems: 'center', 
-            ml: 2,
-            padding: '8px'
+            alignItems: 'center',
+            mr: { xs: 1, md: 3 }
           }}>
             <NavLink to="/" style={{ 
               display: 'flex', 
@@ -116,26 +117,20 @@ const Navbar = () => {
                 src="/logo-necsoo.png" 
                 alt="NeCSOO Logo" 
                 style={{ 
-                  height: '75px',
+                  height: '50px',
                   width: 'auto',
-                  marginRight: '15px',
-                  transition: 'all 0.3s ease',
-                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))'
-                  }
+                  marginRight: '10px',
+                  transition: 'transform 0.3s ease',
                 }}
               />
               <Box
                 component="span"
                 sx={{
-                  fontSize: '2rem',
-                  fontWeight: 800,
+                  fontSize: { xs: '1.5rem', md: '1.75rem' },
+                  fontWeight: 700,
                   color: theme.palette.primary.main,
                   display: { xs: 'none', md: 'block' },
                   letterSpacing: '0.5px',
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
                 }}
               >
                 NeCSOO
@@ -148,25 +143,86 @@ const Navbar = () => {
             <Box sx={{ 
               flexGrow: 1, 
               display: 'flex', 
-              justifyContent: 'center', 
-              gap: 2 
+              justifyContent: 'center',
+              gap: 1
             }}>
-              {menuItems.map((item) => (
+              <Button
+                component={NavLink}
+                to="/"
+                sx={{
+                  color: 'text.primary',
+                  px: 1.5,
+                  '&.active': {
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                  },
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  },
+                }}
+              >
+                Home
+              </Button>
+              <Button
+                endIcon={<KeyboardArrowDownIcon />}
+                onClick={handleAboutMenuOpen}
+                sx={{
+                  color: 'text.primary',
+                  px: 1.5,
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  },
+                }}
+              >
+                About
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleAboutMenuClose}
+                MenuListProps={{
+                  'aria-labelledby': 'about-button',
+                }}
+                sx={{
+                  '& .MuiPaper-root': {
+                    mt: 1,
+                    minWidth: 220,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  },
+                }}
+              >
+                {aboutMenuItems.map((item) => (
+                  <MenuItem
+                    key={item.text}
+                    component={NavLink}
+                    to={item.path}
+                    onClick={handleAboutMenuClose}
+                    sx={{
+                      py: 1,
+                      '&.active': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                        color: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    {item.text}
+                  </MenuItem>
+                ))}
+              </Menu>
+              {menuItems.slice(1).map((item) => (
                 <Button
                   key={item.text}
-                  component={NavLink} // Use NavLink instead of Link
+                  component={NavLink}
                   to={item.path}
                   sx={{
                     color: 'text.primary',
-                    textTransform: 'none',
-                    fontSize: '1rem',
+                    px: 1.5,
+                    '&.active': {
+                      color: theme.palette.primary.main,
+                      fontWeight: 600,
+                    },
                     '&:hover': {
                       backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                    },
-                    // Active link styling with the 'active' class
-                    '&.active': {
-                      fontWeight: 'bold',
-                      color: theme.palette.primary.main,
                     },
                   }}
                 >
@@ -178,7 +234,7 @@ const Navbar = () => {
 
           {/* Donate Button (Desktop) */}
           {!isMobile && (
-            <Box sx={{ flexGrow: 0, ml: 2 }}>
+            <Box sx={{ flexGrow: 0 }}>
               <DonateButton />
             </Box>
           )}
@@ -192,10 +248,10 @@ const Navbar = () => {
               onClick={handleDrawerToggle}
               sx={{
                 ml: 'auto',
-                color: 'text.primary', // Set color of MenuIcon to match theme
+                color: 'text.primary',
               }}
             >
-              <MenuIcon sx={{ color: '#333' }} /> {/* Set the color of MenuIcon */}
+              <MenuIcon /> 
             </IconButton>
           )}
         </Toolbar>
@@ -208,17 +264,115 @@ const Navbar = () => {
         onClose={handleDrawerToggle}
         sx={{
           '& .MuiDrawer-paper': {
-            width: 250,
+            width: 260,
+            pt: 1,
           }
         }}
       >
         <Box
-          sx={{ width: 250 }}
+          sx={{ width: 260 }}
           role="presentation"
-          onClick={handleDrawerToggle}
-          onKeyDown={handleDrawerToggle}
         >
-          {drawer}
+          <List>
+            <ListItem 
+              button 
+              component={NavLink}
+              to="/"
+              onClick={handleDrawerToggle}
+              sx={{
+                py: 1,
+                '&.active': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  '& .MuiListItemText-primary': {
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                  },
+                },
+              }}
+            >
+              <ListItemText primary="Home" />
+            </ListItem>
+            {/* About section with collapse */}
+            <ListItem 
+              button 
+              onClick={() => setAboutOpen(!aboutOpen)}
+              sx={{
+                py: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                },
+              }}
+            >
+              <ListItemText 
+                primary="About"
+                sx={{ 
+                  '& .MuiTypography-root': {
+                    color: aboutOpen ? theme.palette.primary.main : 'inherit',
+                    fontWeight: aboutOpen ? 600 : 'inherit',
+                  }
+                }} 
+              />
+              {aboutOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse in={aboutOpen} timeout="auto" unmountOnClose>
+              <List component="div" disablePadding>
+                {aboutMenuItems.map((item) => (
+                  <ListItem 
+                    button 
+                    component={NavLink}
+                    to={item.path} 
+                    key={item.text}
+                    onClick={handleDrawerToggle}
+                    sx={{
+                      pl: 3,
+                      py: 0.75,
+                      '&.active': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                        '& .MuiListItemText-primary': {
+                          color: theme.palette.primary.main,
+                          fontWeight: 600,
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemText 
+                      primary={item.text}
+                      primaryTypographyProps={{
+                        style: { 
+                          fontSize: '0.9rem',
+                          fontWeight: 'inherit',
+                        }
+                      }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
+            {menuItems.slice(1).map((item) => (
+              <ListItem 
+                button 
+                component={NavLink}
+                to={item.path} 
+                key={item.text}
+                onClick={handleDrawerToggle}
+                sx={{
+                  py: 1,
+                  '&.active': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    '& .MuiListItemText-primary': {
+                      color: theme.palette.primary.main,
+                      fontWeight: 600,
+                    },
+                  },
+                }}
+              >
+                <ListItemText primary={item.text} />
+              </ListItem>
+            ))}
+            <ListItem sx={{ justifyContent: 'center', mt: 1, mb: 1 }}>
+              <DonateButton />
+            </ListItem>
+          </List>
         </Box>
       </Drawer>
     </AppBar>

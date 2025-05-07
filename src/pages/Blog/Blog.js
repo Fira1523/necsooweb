@@ -30,11 +30,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CategoryIcon from '@mui/icons-material/Category';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PersonIcon from '@mui/icons-material/Person';
-import ShareIcon from '@mui/icons-material/Share';
 import SearchIcon from '@mui/icons-material/Search';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 const HeroSection = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(135deg, #01B7EA 0%, #0288D1 100%)', // New blue color scheme
@@ -152,6 +148,20 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const ImageContainer = styled(Box)(({ theme }) => ({
+  width: '40%',
+  position: 'relative',
+  backgroundColor: theme.palette.grey[100],
+  borderRight: '1px solid rgba(0, 0, 0, 0.08)',
+}));
+
+const ContentContainer = styled(Box)(({ theme }) => ({
+  width: '60%',
+  height: '100%',
+  overflow: 'auto',
+  padding: theme.spacing(4),
+}));
+
 const ContentTypography = styled(Typography)(({ theme }) => ({
   fontSize: '0.95rem',
   lineHeight: 1.6,
@@ -177,10 +187,10 @@ const Blog = () => {
 
   const postsPerPage = 8;
   const categories = [
-    { value: 'news', label: 'News', icon: CategoryIcon },
-    { value: 'events', label: 'Events', icon: CalendarTodayIcon },
-    { value: 'success-stories', label: 'Success Stories', icon: PersonIcon },
-    { value: 'updates', label: 'Updates', icon: AccessTimeIcon },
+    { value: 'News', label: 'News', icon: CategoryIcon },
+    { value: 'Events', label: 'Events', icon: CalendarTodayIcon },
+    { value: 'Success-stories', label: 'Success Stories', icon: PersonIcon },
+    { value: 'Updates', label: 'Updates', icon: AccessTimeIcon },
   ];
 
   useEffect(() => {
@@ -243,31 +253,6 @@ const Blog = () => {
 
   const handlePostClick = (post) => {
     setSelectedPost(post);
-  };
-
-  const handleShare = (post, platform) => {
-    // Implement sharing functionality
-    if (navigator.share) {
-      navigator.share({
-        title: post.title,
-        text: post.content.substring(0, 100) + '...',
-        url: window.location.href,
-      });
-    } else {
-      switch (platform) {
-        case 'facebook':
-          window.open(`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`, '_blank');
-          break;
-        case 'twitter':
-          window.open(`https://twitter.com/intent/tweet?url=${window.location.href}&text=${post.title}`, '_blank');
-          break;
-        case 'linkedin':
-          window.open(`https://www.linkedin.com/sharing/share?url=${window.location.href}&title=${post.title}`, '_blank');
-          break;
-        default:
-          break;
-      }
-    }
   };
 
   // Pagination
@@ -436,45 +421,48 @@ const Blog = () => {
       </Box>
 
       <StyledDialog
-        open={!!selectedPost}
+        open={selectedPost !== null}
         onClose={() => setSelectedPost(null)}
-        maxWidth={false}
+        maxWidth="md"
         fullWidth
       >
         {selectedPost && (
           <>
-            <DialogTitle sx={{ p: 2, borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <IconButton 
-                  onClick={() => setSelectedPost(null)}
-                  sx={{ color: '#4B5563' }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </DialogTitle>
-            <DialogContent>
-              <Box 
-                sx={{ 
-                  width: '45%',
-                  position: 'relative',
-                  bgcolor: '#f3f4f6',
-                  borderRight: '1px solid rgba(0, 0, 0, 0.08)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  py: 4,
+            <DialogTitle 
+              sx={{ 
+                p: 2, 
+                position: 'absolute', 
+                right: 0, 
+                zIndex: 1,
+                background: 'transparent',
+              }}
+            >
+              <IconButton
+                onClick={() => setSelectedPost(null)}
+                sx={{
+                  color: '#fff',
+                  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                  },
                 }}
               >
-                <Box
-                  sx={{
-                    flex: 1,
-                    position: 'relative',
-                    mx: 4,
-                    borderRadius: 1,
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                  }}
-                >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent
+              sx={{
+                backdropFilter: 'blur(10px)',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              }}
+            >
+              <Box sx={{ 
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+              }}>
+                <ImageContainer>
                   <Box
                     component="img"
                     src={`http://localhost:8000/storage/${selectedPost.image}`}
@@ -483,21 +471,13 @@ const Blog = () => {
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
+                      position: 'sticky',
+                      top: 0,
                     }}
                   />
-                </Box>
-              </Box>
-
-              <Box 
-                sx={{ 
-                  width: '55%',
-                  p: 4,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  bgcolor: '#FFFFFF',
-                }}
-              >
-                <Box>
+                </ImageContainer>
+                
+                <ContentContainer>
                   <CategoryChip
                     label={selectedPost.category}
                     sx={{ 
@@ -512,26 +492,25 @@ const Blog = () => {
                       },
                     }}
                   />
-                  <Typography 
-                    variant="h4" 
-                    sx={{ 
+
+                  <Typography
+                    variant="h4"
+                    sx={{
                       fontWeight: 700,
+                      mb: 2,
                       color: '#111827',
-                      mb: 2.5,
+                      fontSize: { xs: '1.5rem', sm: '2rem' },
+                      letterSpacing: '-0.02em',
                       lineHeight: 1.2,
-                      fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
-                      letterSpacing: '-0.01em',
                     }}
                   >
                     {selectedPost.title}
                   </Typography>
 
                   <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 3, 
+                    display: 'flex',
+                    gap: 3,
                     mb: 3,
-                    color: '#6B7280',
                   }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <CalendarTodayIcon 
@@ -577,80 +556,12 @@ const Blog = () => {
                     </Box>
                   </Box>
 
-                  <Divider 
-                    sx={{ 
-                      mb: 3,
-                      borderColor: 'rgba(0, 0, 0, 0.08)',
-                    }} 
-                  />
-
                   <ContentTypography>
                     {selectedPost.content.split('\n').map((paragraph, index) => (
                       <p key={index}>{paragraph}</p>
                     ))}
                   </ContentTypography>
-
-                  <Box sx={{ 
-                    mt: 3, 
-                    pt: 3, 
-                    borderTop: '1px solid rgba(0, 0, 0, 0.08)',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                    <Typography 
-                      variant="subtitle2" 
-                      sx={{ 
-                        fontWeight: 600,
-                        color: '#111827',
-                        fontSize: '0.875rem',
-                      }}
-                    >
-                      Share this story
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1.5 }}>
-                      <IconButton 
-                        size="small"
-                        onClick={() => handleShare(selectedPost, 'facebook')}
-                        sx={{ 
-                          color: '#01B7EA',
-                          '&:hover': {
-                            backgroundColor: '#E1F5FE',
-                          },
-                          padding: 1,
-                        }}
-                      >
-                        <FacebookIcon sx={{ fontSize: '1.125rem' }} />
-                      </IconButton>
-                      <IconButton 
-                        size="small"
-                        onClick={() => handleShare(selectedPost, 'twitter')}
-                        sx={{ 
-                          color: '#01B7EA',
-                          '&:hover': {
-                            backgroundColor: '#E1F5FE',
-                          },
-                          padding: 1,
-                        }}
-                      >
-                        <TwitterIcon sx={{ fontSize: '1.125rem' }} />
-                      </IconButton>
-                      <IconButton 
-                        size="small"
-                        onClick={() => handleShare(selectedPost, 'linkedin')}
-                        sx={{ 
-                          color: '#01B7EA',
-                          '&:hover': {
-                            backgroundColor: '#E1F5FE',
-                          },
-                          padding: 1,
-                        }}
-                      >
-                        <LinkedInIcon sx={{ fontSize: '1.125rem' }} />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </Box>
+                </ContentContainer>
               </Box>
             </DialogContent>
           </>

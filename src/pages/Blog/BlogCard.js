@@ -9,6 +9,7 @@ import {
   Box,
   Chip,
   Avatar,
+  Button,
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -19,8 +20,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: '#fff',
   borderRadius: theme.spacing(1),
   overflow: 'hidden',
-  cursor: 'pointer',
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   display: 'flex',
   height: '320px',
   boxShadow: 'none',
@@ -70,7 +69,7 @@ const MetadataBox = styled(Box)(({ theme }) => ({
 
 const BlogCard = ({ post, onClick, readingTime }) => {
   return (
-    <StyledCard onClick={onClick}>
+    <StyledCard>
       <ImageWrapper>
         <StyledCardMedia
           className="card-media"
@@ -131,6 +130,7 @@ const BlogCard = ({ post, onClick, readingTime }) => {
           sx={{
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             gap: 2.5,
             mt: 2.5,
             pt: 2.5,
@@ -138,22 +138,40 @@ const BlogCard = ({ post, onClick, readingTime }) => {
             borderColor: 'rgba(0, 0, 0, 0.06)',
           }}
         >
-          <MetadataBox>
-            <CalendarTodayIcon />
-            <Typography variant="caption" sx={{ fontWeight: 500, color: '#4B5563' }}>
-              {new Date(post.created_at).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-              })}
-            </Typography>
-          </MetadataBox>
-          <MetadataBox>
-            <AccessTimeIcon />
-            <Typography variant="caption" sx={{ fontWeight: 500, color: '#4B5563' }}>
-              {readingTime} min read
-            </Typography>
-          </MetadataBox>
+          <Box sx={{ display: 'flex', gap: 2.5 }}>
+            <MetadataBox>
+              <CalendarTodayIcon />
+              <Typography variant="caption" sx={{ fontWeight: 500, color: '#4B5563' }}>
+                {new Date(post.created_at).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </Typography>
+            </MetadataBox>
+            <MetadataBox>
+              <AccessTimeIcon />
+              <Typography variant="caption" sx={{ fontWeight: 500, color: '#4B5563' }}>
+                {readingTime} min read
+              </Typography>
+            </MetadataBox>
+          </Box>
+          
+          <Button
+            onClick={onClick}
+            sx={{
+              minWidth: 'auto',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: '#01B7EA',
+              '&:hover': {
+                backgroundColor: '#E1F5FE',
+              },
+              textTransform: 'none',
+            }}
+          >
+            Read More
+          </Button>
         </Box>
       </CardContent>
     </StyledCard>

@@ -18,14 +18,14 @@ import SendIcon from '@mui/icons-material/Send';
 const HeroSection = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(135deg, #01B7EA 0%, #0288D1 100%)',
   color: '#FFFFFF',
-  padding: theme.spacing(15, 4),
+  padding: theme.spacing(8, 2),
   position: 'relative',
   minHeight: 'auto',
   display: 'flex',
   alignItems: 'center',
   textAlign: 'center',
   marginTop: '64px',
-  marginBottom: theme.spacing(8),
+  marginBottom: theme.spacing(4),
   '&::before': {
     content: '""',
     position: 'absolute',
@@ -39,22 +39,25 @@ const HeroSection = styled(Box)(({ theme }) => ({
 }));
 
 const ContactCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(4),
-  borderRadius: theme.spacing(2),
+  padding: theme.spacing(2),
+  borderRadius: theme.spacing(1),
   boxShadow: 'none',
   border: '1px solid rgba(0, 0, 0, 0.08)',
   height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(2),
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   '&:hover': {
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
-    transform: 'translateY(-4px)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+    transform: 'translateY(-2px)',
   },
 }));
 
 const MapContainer = styled('iframe')(({ theme }) => ({
   width: '100%',
-  height: '350px',
-  borderRadius: theme.spacing(2),
+  height: '400px',
+  borderRadius: theme.spacing(1),
   border: '1px solid rgba(0, 0, 0, 0.08)',
   boxShadow: 'none',
 }));
@@ -91,19 +94,19 @@ const Contact = () => {
 
   const contactInfo = [
     {
-      icon: <LocationOnIcon sx={{ fontSize: 40 }} />,
+      icon: <LocationOnIcon sx={{ fontSize: 28 }} />,
       title: 'Our Location',
       details: 'Fresh Corner Building, Gurdshola, Addis Ababa, Ethiopia',
       action: null,
     },
     {
-      icon: <PhoneIcon sx={{ fontSize: 40 }} />,
+      icon: <PhoneIcon sx={{ fontSize: 28 }} />,
       title: 'Phone Number',
       details: '+251 11 126 2279',
       action: handlePhoneClick,
     },
     {
-      icon: <EmailIcon sx={{ fontSize: 40 }} />,
+      icon: <EmailIcon sx={{ fontSize: 28 }} />,
       title: 'Email Address',
       details: 'info@necsoo.org',
       action: null,
@@ -117,7 +120,7 @@ const Contact = () => {
           <Typography 
             variant="h2" 
             sx={{ 
-              fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem' },
+              fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
               fontWeight: 700,
               mb: 2,
             }}
@@ -127,10 +130,10 @@ const Contact = () => {
           <Typography 
             variant="h5"
             sx={{ 
-              maxWidth: '800px',
+              maxWidth: '600px',
               mx: 'auto',
               opacity: 0.9,
-              fontSize: { xs: '1rem', sm: '1.25rem' },
+              fontSize: { xs: '0.875rem', sm: '1rem' },
               fontWeight: 400,
             }}
           >
@@ -139,43 +142,41 @@ const Contact = () => {
         </Container>
       </HeroSection>
 
-      <Container maxWidth="lg" sx={{ mb: 8 }}>
-        <Grid container spacing={4} sx={{ mb: 8 }}>
+      <Container maxWidth="lg" sx={{ mb: 6 }}>
+        <Grid container spacing={2} sx={{ mb: 6 }}>
           {contactInfo.map((info, index) => (
             <Grid item xs={12} md={4} key={index}>
               <ContactCard>
-                <Box sx={{ textAlign: 'center' }}>
-                  <IconButton
-                    onClick={info.action}
+                <IconButton
+                  onClick={info.action}
+                  sx={{
+                    backgroundColor: 'rgba(1, 183, 234, 0.1)',
+                    color: '#01B7EA',
+                    p: 1.5,
+                    cursor: info.action ? 'pointer' : 'default',
+                    '&:hover': {
+                      backgroundColor: info.action ? 'rgba(1, 183, 234, 0.2)' : 'rgba(1, 183, 234, 0.1)',
+                    },
+                  }}
+                >
+                  {info.icon}
+                </IconButton>
+                <Box>
+                  <Typography
+                    variant="subtitle1"
                     sx={{
-                      backgroundColor: 'rgba(1, 183, 234, 0.1)',
-                      color: '#01B7EA',
-                      mb: 2,
-                      p: 2,
-                      cursor: info.action ? 'pointer' : 'default',
-                      '&:hover': {
-                        backgroundColor: info.action ? 'rgba(1, 183, 234, 0.2)' : 'rgba(1, 183, 234, 0.1)',
-                      },
-                    }}
-                  >
-                    {info.icon}
-                  </IconButton>
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      mb: 1,
                       fontWeight: 600,
                       color: '#111827',
+                      mb: 0.5,
                     }}
                   >
                     {info.title}
                   </Typography>
                   <Typography
-                    variant="body1"
-                    onClick={info.action}
+                    variant="body2"
                     sx={{
                       color: '#6B7280',
-                      cursor: info.action ? 'pointer' : 'inherit',
+                      cursor: info.action ? 'pointer' : 'default',
                       '&:hover': {
                         color: info.action ? '#01B7EA' : '#6B7280',
                       },
@@ -189,13 +190,13 @@ const Contact = () => {
           ))}
         </Grid>
 
-        <Grid container spacing={6}>
+        <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
             <Typography 
-              variant="h4" 
+              variant="h5" 
               sx={{ 
-                mb: 4,
-                fontWeight: 700,
+                mb: 3,
+                fontWeight: 600,
                 color: '#111827',
                 position: 'relative',
                 '&::after': {
@@ -203,9 +204,9 @@ const Contact = () => {
                   position: 'absolute',
                   bottom: -8,
                   left: 0,
-                  width: 60,
-                  height: 4,
-                  borderRadius: 2,
+                  width: 40,
+                  height: 3,
+                  borderRadius: 1.5,
                   backgroundColor: '#01B7EA',
                 },
               }}
@@ -213,13 +214,14 @@ const Contact = () => {
               Send us a Message
             </Typography>
             <form onSubmit={handleSubmit}>
-              <Grid container spacing={3}>
+              <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <StyledTextField 
                     fullWidth 
                     label="Full Name" 
                     variant="outlined" 
                     required 
+                    size="small"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -229,6 +231,7 @@ const Contact = () => {
                     type="email" 
                     variant="outlined" 
                     required 
+                    size="small"
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -238,6 +241,7 @@ const Contact = () => {
                     type="tel" 
                     variant="outlined" 
                     required 
+                    size="small"
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -246,7 +250,7 @@ const Contact = () => {
                     label="Message" 
                     variant="outlined" 
                     multiline 
-                    rows={4} 
+                    rows={3}
                     required 
                   />
                 </Grid>
@@ -258,10 +262,10 @@ const Contact = () => {
                     sx={{
                       bgcolor: '#01B7EA',
                       color: '#FFFFFF',
-                      py: 1.5,
-                      px: 4,
+                      py: 1,
+                      px: 3,
                       borderRadius: 1,
-                      fontWeight: 600,
+                      fontWeight: 500,
                       '&:hover': {
                         bgcolor: '#0288D1',
                       },
@@ -276,10 +280,10 @@ const Contact = () => {
 
           <Grid item xs={12} md={6}>
             <Typography 
-              variant="h4" 
+              variant="h5" 
               sx={{ 
-                mb: 4,
-                fontWeight: 700,
+                mb: 3,
+                fontWeight: 600,
                 color: '#111827',
                 position: 'relative',
                 '&::after': {
@@ -287,9 +291,9 @@ const Contact = () => {
                   position: 'absolute',
                   bottom: -8,
                   left: 0,
-                  width: 60,
-                  height: 4,
-                  borderRadius: 2,
+                  width: 40,
+                  height: 3,
+                  borderRadius: 1.5,
                   backgroundColor: '#01B7EA',
                 },
               }}
