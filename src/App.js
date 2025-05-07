@@ -148,7 +148,7 @@ const PublicLayout = ({ children }) => {
                 } 
               }}>
                 <FooterLink href="/">Home</FooterLink>
-                <FooterLink href="/about">About</FooterLink>
+                <FooterLink href="/about/history">About</FooterLink>
                 <FooterLink href="/gallery">Gallery</FooterLink>
                 <FooterLink href="/portfolio">Portfolio</FooterLink>
                 <FooterLink href="/blog">Blog</FooterLink>
