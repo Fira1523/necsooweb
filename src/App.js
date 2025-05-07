@@ -7,6 +7,10 @@ import Navbar from './components/Navigation/Navbar';
 import AdminLayout from './components/AdminLayout';
 import Home from './pages/Home/Home';
 import About from './pages/About/About';
+import History from './pages/About/History';
+import Vision from './pages/About/Vision';
+import Objectives from './pages/About/Objectives';
+import Governance from './pages/About/Governance';
 import Gallery from './pages/Gallery/Gallery';
 import Portfolio from './pages/Portfolio/Portfolio';
 import Blog from './pages/Blog/Blog';
@@ -256,6 +260,10 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/about/history" element={<History />} />
+        <Route path="/about/vision" element={<Vision />} />
+        <Route path="/about/objectives" element={<Objectives />} />
+        <Route path="/about/governance" element={<Governance />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/blog" element={<Blog />} />
