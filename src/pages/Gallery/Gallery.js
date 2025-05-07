@@ -143,14 +143,6 @@ const Gallery = () => {
     { label: 'Community', value: 'community', icon: <GroupsIcon /> },
   ];
 
-  // Gallery statistics
-  const stats = [
-    { number: '1000+', label: 'Photos Captured' },
-    { label: 'Years of Memories', number: '14' },
-    { number: '50+', label: 'Events Documented' },
-    { number: '100+', label: 'Success Stories' },
-  ];
-
   // Fetch gallery items from the API
   useEffect(() => {
     const fetchGalleryItems = async () => {
