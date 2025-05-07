@@ -143,7 +143,7 @@ const Gallery = () => {
     { label: 'Community', value: 'community', icon: <GroupsIcon /> },
   ];
 
-  // Fetch gallery items from the API
+  // Fetch gallery items from API
   useEffect(() => {
     const fetchGalleryItems = async () => {
       try {
